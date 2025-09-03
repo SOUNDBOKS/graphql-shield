@@ -1,7 +1,6 @@
 {
   "name": "@soundboks/graphql-shield",
   "version": "1.0.0",
-  "private": true,
   "author": "Matic Zavadlal <matic.zavadlal@gmail.com>",
   "license": "MIT",
   "contributors": [
