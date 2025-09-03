@@ -2,12 +2,12 @@
 
 # graphql-shield
 
-[![CircleCI](https://circleci.com/gh/maticzav/graphql-shield/tree/master.svg?style=shield)](https://circleci.com/gh/maticzav/graphql-shield/tree/master)
-[![codecov](https://codecov.io/gh/maticzav/graphql-shield/branch/master/graph/badge.svg)](https://codecov.io/gh/maticzav/graphql-shield)
-[![npm version](https://badge.fury.io/js/graphql-shield.svg)](https://badge.fury.io/js/graphql-shield)
-[![Backers on Open Collective](https://opencollective.com/graphql-shield/backers/badge.svg)](#backers)[![Sponsors on Open Collective](https://opencollective.com/graphql-shield/sponsors/badge.svg)](#sponsors)
-
 > GraphQL Server permissions as another layer of abstraction!
+
+Fork from the original [graphql-shield](https://github.com/maticzav/graphql-shield) with modifications to exist in the soundboks ecosystem.
+
+## Reason for fork
+The original repository stopped producing releases and after 3 years, we had to proceed with newer versions of graphql which wasnt supported.
 
 ## Overview
 

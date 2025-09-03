@@ -3,7 +3,7 @@
     "incremental": true,
     "baseUrl": ".",
 
-    "rootDir": "packages",
+    "rootDir": ".",
     "outDir": "dist",
 
     "esModuleInterop": true,
@@ -13,7 +13,6 @@
     "module": "esnext",
     "target": "es2018",
     "lib": ["es6", "esnext", "es2015", "dom"],
-    "suppressImplicitAnyIndexErrors": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "sourceMap": true,
@@ -23,16 +22,14 @@
     "alwaysStrict": true,
     "noImplicitReturns": true,
     "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "resolveJsonModule": true,
     "skipLibCheck": true,
 
     "paths": {
-      "@graphqlshield/*": [
-        "packages/*/src/index.ts",
-        "packages/plugins/*/src/index.ts"
-      ]
+      "~/*": ["./*"]
     }
   },
-  "include": ["packages"],
+  "include": ["src"],
   "exclude": ["**/dist", "**/temp"]
 }
