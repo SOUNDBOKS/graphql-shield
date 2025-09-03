@@ -12,17 +12,38 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "main": "./src/index.js",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
+  "typings": "typings/index.d.ts",
+  "typescript": {
+    "definition": "typings/index.d.ts"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./typings/index.d.cts",
+        "default": "./cjs/index.js"
+      },
+      "import": {
+        "types": "./typings/index.d.ts",
+        "default": "./esm/index.js"
+      },
+      "default": {
+        "types": "./typings/index.d.ts",
+        "default": "./esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "prepare": "husky",
-    "prebuild": "rimraf packages/*/dist",
     "test": "jest",
-    "check": "pnpm -r run check",
     "test:ci": "jest --coverage",
     "prerelease": "yarn build",
-    "release": "changeset publish",
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\"",
-    "build": "rimraf ./dist && tsc",
+    "transpile": "tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json ./tsconfig.types.json",
+    "build": "rimraf ./dist && yarn transpile && cp package.json ./dist",
     "build:watch": "chokidar \"src/*.*\"  -c \"yarn build\" --initial",
     "build:docs": "typedoc",
     "type-check": "tsc --noEmit",
