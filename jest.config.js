@@ -7,5 +7,5 @@ module.exports = {
   modulePathIgnorePatterns: ['<rootDir>/dist/'],
   collectCoverageFrom: ['./src/**'],
   moduleDirectories: ['node_modules', __dirname],
-  coverageReporters: ['json-summary', 'text', 'lcov']
+  coverageReporters: ['json-summary', 'text', 'lcov'],
 };
