@@ -7,8 +7,10 @@
     "Rasmus Letterkrantz <rasmus@soundboks.com>"
   ],
   "repository": {
-    "type": "git",
-    "url": "https://github.com/soundboks/graphql-shield"
+    "url": "git://github.com/SOUNDBOKS/server.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "main": "./src/index.js",
   "scripts": {
