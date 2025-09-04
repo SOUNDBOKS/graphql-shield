@@ -12,13 +12,13 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
+  "type": "module",
   "main": "cjs/index.js",
   "module": "esm/index.js",
-  "typings": "typings/index.d.ts",
+  "types": "typings/index.d.ts",
   "typescript": {
     "definition": "typings/index.d.ts"
   },
-  "type": "module",
   "exports": {
     ".": {
       "require": {
@@ -43,7 +43,8 @@
     "prerelease": "yarn build",
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\"",
     "transpile": "tsdown",
-    "build": "rimraf ./dist && yarn transpile && cp package.json ./dist",
+    "build": "yarn transpile && yarn build:clean-cjs-from-typings && cp package.json ./dist",
+    "build:clean-cjs-from-typings": "rm -rf dist/typings/*.cjs",
     "build:watch": "chokidar \"src/*.*\"  -c \"yarn build\" --initial",
     "build:docs": "typedoc",
     "type-check": "tsc --noEmit",
@@ -80,7 +81,6 @@
     "husky": "9.1.7",
     "node-fetch": "^2.6.7",
     "prettier": "3.6.2",
-    "rimraf": "6.0.1",
     "semantic-release": "24.2.7",
     "tsdown": "^0.14.2",
     "typescript": "5.9.2",

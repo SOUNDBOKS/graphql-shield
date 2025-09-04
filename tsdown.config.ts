@@ -7,6 +7,7 @@ export default defineConfig([
     format: ['esm'],
     fixedExtension: true,
     unbundle: true,
+    treeshake: false,
     dts: false,
   },
   {
@@ -14,13 +15,16 @@ export default defineConfig([
     outDir: 'dist/cjs',
     format: ['cjs'],
     unbundle: true,
+    treeshake: false,
     dts: false,
   },
   {
-    entry: 'src/index.ts',
+    entry: 'src/**/*.ts',
     outDir: 'dist/typings',
-    format: ['esm'],
+    format: ['esm', 'cjs'],
     unbundle: true,
+    treeshake: false,
+    clean: true,
     dts: {
       emitDtsOnly: true,
     },
