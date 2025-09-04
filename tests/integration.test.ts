@@ -5,7 +5,7 @@ import { ApolloServer } from '@apollo/server';
 import { gql } from 'graphql-tag';
 import { startStandaloneServer } from '@apollo/server/standalone';
 
-import { shield, allow, deny } from '../src';
+import { shield, allow, deny } from '../src/index.js';
 
 describe('integration tests', () => {
   test('works with ApolloServer', async () => {

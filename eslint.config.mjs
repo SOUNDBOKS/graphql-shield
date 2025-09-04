@@ -16,7 +16,10 @@ export default [
         ecmaVersion: 'latest',
         sourceType: 'module',
       },
-      globals: globals.node,
+      globals: {
+        ...globals.node,
+        vi: true,
+      },
     },
     plugins: {
       eslintPluginTypescriptEslint,
@@ -39,6 +42,6 @@ export default [
         },
       ],
     },
-    ignores: ['src/client/soundboks/gql/*'],
+    ignores: ['vitest.config.ts'],
   },
 ];

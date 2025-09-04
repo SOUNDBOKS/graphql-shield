@@ -1,8 +1,8 @@
 import { graphql } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { shield, rule } from '../src/index';
-import { IHashFunction } from '../src/types';
+import { shield, rule } from '../src/index.js';
+import { IHashFunction } from '../src/types.js';
 
 describe('caching:', () => {
   test('Strict cache - Rule is called multiple times, based on different parent.', async () => {
@@ -30,7 +30,7 @@ describe('caching:', () => {
 
     /* Permissions */
 
-    const allowMock = jest.fn().mockResolvedValue(true);
+    const allowMock = vi.fn().mockResolvedValue(true);
     const permissions = shield({
       Test: rule({ cache: 'strict' })(allowMock),
     });
@@ -89,7 +89,7 @@ describe('caching:', () => {
 
     /* Tests */
 
-    const allowMock = jest.fn().mockResolvedValue(true);
+    const allowMock = vi.fn().mockResolvedValue(true);
 
     const permissions = shield({
       Query: rule({ cache: 'strict' })(allowMock),
@@ -159,10 +159,10 @@ describe('caching:', () => {
 
     /* Permissions */
 
-    const ruleOneMock = jest.fn().mockResolvedValue(true);
+    const ruleOneMock = vi.fn().mockResolvedValue(true);
     const ruleOne = rule({ cache: 'contextual' })(ruleOneMock);
 
-    const ruleTwoMock = jest.fn().mockResolvedValue(true);
+    const ruleTwoMock = vi.fn().mockResolvedValue(true);
     const ruleTwo = rule({ cache: 'contextual' })(ruleTwoMock);
 
     const permissions = shield({
@@ -237,7 +237,7 @@ describe('caching:', () => {
 
     /* Permissions */
 
-    const allowMock = jest.fn().mockResolvedValue(true);
+    const allowMock = vi.fn().mockResolvedValue(true);
     const allow = rule({ cache: 'no_cache' })(allowMock);
 
     const permissions = shield({
@@ -299,7 +299,7 @@ describe('caching:', () => {
 
     /* Tests */
 
-    const allowMock = jest.fn().mockResolvedValue(true);
+    const allowMock = vi.fn().mockResolvedValue(true);
 
     const permissions = shield({
       Query: rule({
@@ -363,9 +363,9 @@ test('Customize hash function', async () => {
 
   /* Tests */
 
-  const allowMock = jest.fn().mockResolvedValue(true);
+  const allowMock = vi.fn().mockResolvedValue(true);
 
-  const hashFunction: IHashFunction = jest.fn((opts) => JSON.stringify(opts));
+  const hashFunction: IHashFunction = vi.fn((opts: any) => JSON.stringify(opts));
 
   const permissions = shield(
     {
@@ -438,7 +438,7 @@ describe('legacy cache:', () => {
 
     /* Permissions */
 
-    const allowMock = jest.fn().mockResolvedValue(true);
+    const allowMock = vi.fn().mockResolvedValue(true);
     const permissions = shield({
       Test: rule({ cache: true })(allowMock),
     });
@@ -498,7 +498,7 @@ describe('legacy cache:', () => {
     });
 
     /* Permissions */
-    const allowMock = jest.fn().mockResolvedValue(true);
+    const allowMock = vi.fn().mockResolvedValue(true);
     const allow = rule({ cache: false })(allowMock);
 
     const permissions = shield({

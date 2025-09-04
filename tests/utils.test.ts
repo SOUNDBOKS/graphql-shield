@@ -1,5 +1,5 @@
-import { isRule, isLogicRule, isRuleFieldMap, isRuleFunction, withDefault } from '../src/utils';
-import { rule, and } from '../src/constructors';
+import { isRule, isLogicRule, isRuleFieldMap, isRuleFunction, withDefault } from '../src/utils.js';
+import { rule, and } from '../src/constructors.js';
 
 const testSimpleRule = rule()(() => {
   return false;

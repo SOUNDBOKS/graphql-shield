@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
-import { IRuleFunction, IRuleConstructorOptions, ShieldRule, IShieldContext } from './types';
-import { Rule, RuleAnd, RuleOr, RuleNot, RuleTrue, RuleFalse, InputRule, RuleChain, RuleRace } from './rules';
+import { IRuleFunction, IRuleConstructorOptions, ShieldRule, IShieldContext } from './types.js';
+import { Rule, RuleAnd, RuleOr, RuleNot, RuleTrue, RuleFalse, InputRule, RuleChain, RuleRace } from './rules.js';
 
 /**
  *

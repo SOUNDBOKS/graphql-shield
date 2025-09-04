@@ -28,4 +28,4 @@ jobs:
       - run: yarn run build
       - run: |
           cp package.json yarn.lock README.md dist/ && rm .npmrc
-      - run: npx semantic-release@19
+      - run: npx semantic-release@24

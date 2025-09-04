@@ -1,7 +1,7 @@
 import { graphql } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { shield, inputRule } from '../src';
+import { shield, inputRule } from '../src/index.js';
 
 describe('input rule', () => {
   test('schema validation works as expected', async () => {

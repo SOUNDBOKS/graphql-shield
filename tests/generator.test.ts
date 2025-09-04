@@ -1,6 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { applyMiddleware } from 'graphql-middleware';
-import { shield, rule } from '../src';
+import { shield, rule } from '../src/index.js';
 import { graphql } from 'graphql';
 
 describe('generates correct middleware', () => {
@@ -31,7 +31,7 @@ describe('generates correct middleware', () => {
 
     /* Permissions */
 
-    const allowMock = jest.fn().mockResolvedValue(true);
+    const allowMock = vi.fn().mockResolvedValue(true);
     const permissions = shield(rule({ cache: 'no_cache' })(allowMock));
 
     const schemaWithPermissions = applyMiddleware(schema, permissions);
@@ -91,7 +91,7 @@ describe('generates correct middleware', () => {
 
     /* Permissions */
 
-    const allowMock = jest.fn().mockResolvedValue(true);
+    const allowMock = vi.fn().mockResolvedValue(true);
     const permissions = shield({
       Query: rule({ cache: 'no_cache' })(allowMock),
     });
@@ -153,7 +153,7 @@ describe('generates correct middleware', () => {
 
     /* Permissions */
 
-    const allowMock = jest.fn().mockResolvedValue(true);
+    const allowMock = vi.fn().mockResolvedValue(true);
     const permissions = shield({
       Query: { a: rule({ cache: 'no_cache' })(allowMock) },
     });
@@ -218,14 +218,14 @@ describe('generates correct middleware', () => {
 
     /* Permissions */
 
-    const allowMock = jest.fn().mockResolvedValue(true);
-    const defaultQueryMock = jest.fn().mockResolvedValue(true);
-    const defaultTypeMock = jest.fn().mockResolvedValue(true);
+    const allowMock = vi.fn().mockResolvedValue(true);
+    const defaultQueryMock = vi.fn().mockResolvedValue(true);
+    const defaultTypeMock = vi.fn().mockResolvedValue(true);
 
     const permissions = shield({
       Query: {
         a: rule({ cache: 'no_cache' })(allowMock),
-        type: rule({ cache: 'no_cache' })(jest.fn().mockResolvedValue(true)),
+        type: rule({ cache: 'no_cache' })(vi.fn().mockResolvedValue(true)),
         '*': rule({ cache: 'no_cache' })(defaultQueryMock),
       },
       Type: {
@@ -299,14 +299,14 @@ describe('generates correct middleware', () => {
 
     /* Permissions */
 
-    const allowMock = jest.fn().mockResolvedValue(true);
-    const defaultQueryMock = jest.fn().mockResolvedValue(true);
-    const defaultTypeMock = jest.fn().mockResolvedValue(true);
+    const allowMock = vi.fn().mockResolvedValue(true);
+    const defaultQueryMock = vi.fn().mockResolvedValue(true);
+    const defaultTypeMock = vi.fn().mockResolvedValue(true);
 
     const permissions = shield({
       Query: {
         a: rule({ cache: 'no_cache' })(allowMock),
-        type: rule({ cache: 'no_cache' })(jest.fn().mockResolvedValue(true)),
+        type: rule({ cache: 'no_cache' })(vi.fn().mockResolvedValue(true)),
         '*': rule({ cache: 'no_cache' })(defaultQueryMock),
       },
       Type: {

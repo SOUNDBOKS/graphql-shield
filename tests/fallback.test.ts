@@ -1,7 +1,7 @@
 import { graphql } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { shield, rule, allow } from '../src/index';
+import { shield, rule, allow } from '../src/index.js';
 
 describe('fallbackError correctly handles errors', () => {
   test('error in resolver returns fallback error.', async () => {
@@ -567,7 +567,7 @@ describe('fallbackRule correctly applies fallback rule', () => {
 
     /* Permissions */
 
-    const fallbackRuleMock = jest.fn().mockResolvedValue(true);
+    const fallbackRuleMock = vi.fn().mockResolvedValue(true);
     const fallbackRule = rule({ cache: 'no_cache' })(fallbackRuleMock);
 
     const permissions = shield(

@@ -2,9 +2,9 @@ import { graphql, GraphQLResolveInfo } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
-import { shield, rule, allow, deny, and, or, not } from '../src';
-import { LogicRule } from '../src/rules';
-import { chain, race } from '../src/constructors';
+import { shield, rule, allow, deny, and, or, not } from '../src/index.js';
+import { LogicRule } from '../src/rules.js';
+import { chain, race } from '../src/constructors.js';
 
 describe('logic rules', () => {
   test('allow, deny work as expeted', async () => {

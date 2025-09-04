@@ -1,8 +1,8 @@
 import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { validateRuleTree } from '../src/validation';
-import { shield, rule, allow } from '../src/';
-import { and } from '../src/constructors';
+import { validateRuleTree } from '../src/validation.js';
+import { shield, rule, allow } from '../src/index.js';
+import { and } from '../src/constructors.js';
 
 describe('correctly helps developer', () => {
   test('Finds a type missing in schema and warns developer.', async () => {

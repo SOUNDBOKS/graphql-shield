@@ -2,14 +2,14 @@
   "compilerOptions": {
     "incremental": true,
     "baseUrl": ".",
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
     "experimentalDecorators": true,
     "module": "esnext",
-    "target": "es2018",
+    "target": "esnext",
     "lib": ["es6", "esnext", "es2015", "dom"],
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
@@ -23,8 +23,9 @@
     "skipLibCheck": true,
     "paths": {
       "~/*": ["./*"]
-    }
+    },
+    "types": ["node", "vitest/globals"]
   },
-  "include": ["src"],
+  "include": ["src", "tests"],
   "exclude": ["**/dist", "**/temp"]
 }
