@@ -2,7 +2,7 @@ import { graphql } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { shield, rule } from '../src/index.js';
-import { IHashFunction } from '../src/types.js';
+import type { IHashFunction } from '../src/types.js';
 
 describe('caching:', () => {
   test('Strict cache - Rule is called multiple times, based on different parent.', async () => {

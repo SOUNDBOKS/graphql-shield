@@ -1,7 +1,7 @@
 import hash from 'object-hash';
-import { middleware, IMiddlewareGenerator } from 'graphql-middleware';
+import { middleware, type IMiddlewareGenerator } from 'graphql-middleware';
 import { ValidationError, validateRuleTree } from './validation.js';
-import { IRules, IOptions, IOptionsConstructor, ShieldRule, IHashFunction, IFallbackErrorType } from './types.js';
+import type { IRules, IOptions, IOptionsConstructor, ShieldRule, IHashFunction, IFallbackErrorType } from './types.js';
 import { generateMiddlewareGeneratorFromRuleTree } from './generator.js';
 import { allow } from './constructors.js';
 import { withDefault } from './utils.js';

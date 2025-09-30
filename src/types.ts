@@ -1,5 +1,5 @@
-import { GraphQLResolveInfo } from 'graphql';
-import { IMiddlewareGenerator } from 'graphql-middleware';
+import type { GraphQLResolveInfo } from 'graphql';
+import type { IMiddlewareGenerator } from 'graphql-middleware';
 
 // Rule
 
