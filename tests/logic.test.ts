@@ -1,4 +1,4 @@
-import { graphql, GraphQLResolveInfo } from 'graphql';
+import { graphql, type GraphQLResolveInfo } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 

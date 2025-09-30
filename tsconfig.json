@@ -1,17 +1,15 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "baseUrl": ".",
-    "rootDir": ".",
     "outDir": "dist",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
     "experimentalDecorators": true,
-    "module": "esnext",
-    "target": "esnext",
-    "lib": ["es6", "esnext", "es2015", "dom"],
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "target": "es2022",
+    "lib": ["es2022"],
+    "moduleResolution": "NodeNext",
     "emitDecoratorMetadata": true,
     "noImplicitThis": true,
     "strict": true,
@@ -20,12 +18,14 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "resolveJsonModule": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
     "skipLibCheck": true,
     "paths": {
       "~/*": ["./*"]
     },
     "types": ["node", "vitest/globals"]
   },
-  "include": ["src", "tests"],
+  "include": ["src/**/*", "tests"],
   "exclude": ["**/dist", "**/temp"]
 }

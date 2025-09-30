@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import {
+import type {
   IRuleFunction,
   IRule,
   IRuleOptions,
@@ -14,7 +14,7 @@ import {
   IShieldContext,
 } from './types.js';
 import { isLogicRule } from './utils.js';
-import { GraphQLResolveInfo } from 'graphql';
+import type { GraphQLResolveInfo } from 'graphql';
 
 export class Rule implements IRule {
   readonly name: string;

@@ -1,9 +1,9 @@
-import { IMiddleware, IMiddlewareFunction, IMiddlewareGeneratorConstructor } from 'graphql-middleware';
-import { GraphQLSchema, GraphQLObjectType, isObjectType, isIntrospectionType, GraphQLResolveInfo } from 'graphql';
-import { IRules, IOptions, ShieldRule, IRuleFieldMap, IShieldContext } from './types.js';
+import type { IMiddleware, IMiddlewareFunction, IMiddlewareGeneratorConstructor } from 'graphql-middleware';
+import { GraphQLSchema, GraphQLObjectType, isObjectType, isIntrospectionType, type GraphQLResolveInfo } from 'graphql';
+import type { IRules, IOptions, ShieldRule, IRuleFieldMap, IShieldContext } from './types.js';
 import { isRuleFunction, isRuleFieldMap, isRule, isLogicRule, withDefault } from './utils.js';
 import { ValidationError } from './validation.js';
-import { IMiddlewareWithOptions } from 'graphql-middleware/dist/types';
+import type { IMiddlewareWithOptions } from 'graphql-middleware/types';
 
 /**
  *

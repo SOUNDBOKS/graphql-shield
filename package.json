@@ -13,28 +13,12 @@
     "registry": "https://npm.pkg.github.com"
   },
   "type": "module",
-  "main": "cjs/index.js",
-  "module": "esm/index.js",
-  "types": "typings/index.d.ts",
-  "typescript": {
-    "definition": "typings/index.d.ts"
-  },
+  "main": "./index.js",
+  "module": "./index.js",
   "exports": {
-    ".": {
-      "require": {
-        "types": "./typings/index.d.cts",
-        "default": "./cjs/index.cjs"
-      },
-      "import": {
-        "types": "./typings/index.d.ts",
-        "default": "./esm/index.mjs"
-      },
-      "default": {
-        "types": "./typings/index.d.ts",
-        "default": "./esm/index.mjs"
-      }
-    },
-    "./package.json": "./package.json"
+    ".": "./index.js",
+    "./package.json": "./package.json",
+    "./*": "./*"
   },
   "scripts": {
     "prepare": "husky",
@@ -42,11 +26,11 @@
     "test:ci": "vitest --coverage",
     "prerelease": "yarn build",
     "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\"",
-    "transpile": "tsdown",
-    "build": "yarn transpile && yarn build:clean-cjs-from-typings && cp package.json ./dist",
-    "build:clean-cjs-from-typings": "rm -rf dist/typings/*.cjs",
+    "transpile": "tsc --project tsconfig.build.json",
+    "build": "yarn build:clean && yarn transpile && cp package.json ./dist",
     "build:watch": "chokidar \"src/*.*\"  -c \"yarn build\" --initial",
     "build:docs": "typedoc",
+    "build:clean": "rimraf ./dist",
     "type-check": "tsc --noEmit",
     "postbuild": "npm link",
     "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
@@ -81,8 +65,8 @@
     "husky": "9.1.7",
     "node-fetch": "^2.6.7",
     "prettier": "3.6.2",
+    "rimraf": "^6.0.1",
     "semantic-release": "24.2.7",
-    "tsdown": "^0.14.2",
     "typescript": "5.9.2",
     "typescript-eslint": "^8.41.0",
     "vitest": "^3.2.4"

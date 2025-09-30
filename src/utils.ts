@@ -1,4 +1,4 @@
-import { ShieldRule, ILogicRule, IRuleFieldMap, IRule } from './types.js';
+import type { ShieldRule, ILogicRule, IRuleFieldMap, IRule } from './types.js';
 import { Rule, LogicRule } from './rules.js';
 
 /**
