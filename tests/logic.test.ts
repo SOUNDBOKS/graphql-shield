@@ -1,5 +1,4 @@
 import { graphql, type GraphQLResolveInfo } from 'graphql';
-import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 import { shield, rule, allow, deny, and, or, not } from '../src/index.js';
@@ -32,7 +31,7 @@ describe('logic rules', () => {
       },
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -89,7 +88,7 @@ describe('logic rules', () => {
       },
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -168,7 +167,7 @@ describe('logic rules', () => {
       },
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -250,7 +249,7 @@ describe('logic rules', () => {
       },
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -305,7 +304,7 @@ describe('logic rules', () => {
       },
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -381,7 +380,7 @@ describe('logic rules', () => {
       },
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -434,7 +433,7 @@ describe('logic rules', () => {
       },
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -495,7 +494,7 @@ describe('internal execution', () => {
       },
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 

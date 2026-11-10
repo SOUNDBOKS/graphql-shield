@@ -1,41 +1,30 @@
-import type { IMiddleware, IMiddlewareFunction, IMiddlewareGeneratorConstructor } from 'graphql-middleware';
-import { GraphQLSchema, GraphQLObjectType, isObjectType, isIntrospectionType, type GraphQLResolveInfo } from 'graphql';
-import type { IRules, IOptions, ShieldRule, IRuleFieldMap, IShieldContext } from './types.js';
-import { isRuleFunction, isRuleFieldMap, isRule, isLogicRule, withDefault } from './utils.js';
+import { MapperKind, mapSchema } from '@graphql-tools/utils';
+import { defaultFieldResolver, isObjectType, type GraphQLFieldResolver, type GraphQLSchema } from 'graphql';
+import type { IRules, IOptions, ShieldRule, IShieldContext } from './types.js';
+import { isRuleFunction } from './utils.js';
 import { ValidationError } from './validation.js';
-import type { IMiddlewareWithOptions } from 'graphql-middleware/types';
 
 /**
  *
+ * @param resolve
+ * @param rule
  * @param options
  *
- * Generates a middleware function from a given rule and
- * initializes the cache object in context.
+ * Wraps a field resolver so it only runs when the rule allows it,
+ * and initializes the cache object in context.
  *
  */
-function generateFieldMiddlewareFromRule(
+function wrapResolverWithRule(
+  resolve: GraphQLFieldResolver<any, any>,
   rule: ShieldRule,
   options: IOptions,
-): IMiddlewareFunction<object, object, IShieldContext> {
-  async function middleware(
-    resolve: (parent: object, args: object, ctx: IShieldContext, info: GraphQLResolveInfo) => Promise<any>,
-    parent: { [key: string]: any },
-    args: { [key: string]: any },
-    ctx: IShieldContext,
-    info: GraphQLResolveInfo,
-  ) {
-    // Cache
-    if (!ctx) {
-      ctx = {} as IShieldContext;
-    }
-
+): GraphQLFieldResolver<any, IShieldContext | undefined> {
+  return async (parent, args, context, info) => {
+    const ctx = context ?? ({} as IShieldContext);
     if (!ctx._shield) {
-      ctx._shield = {
-        cache: {},
-      };
+      ctx._shield = { cache: {} };
     }
 
-    // Execution
     try {
       const res = await rule.resolve(parent, args, ctx, info, options);
 
@@ -61,187 +50,91 @@ function generateFieldMiddlewareFromRule(
         return options.fallbackError;
       }
     }
-  }
-
-  if (isRule(rule) && rule.extractFragment()) {
-    return {
-      fragment: rule.extractFragment(),
-      resolve: middleware,
-    } as IMiddlewareWithOptions<object, object, IShieldContext>;
-  }
-
-  if (isLogicRule(rule)) {
-    return {
-      fragments: rule.extractFragments(),
-      resolve: middleware,
-    } as IMiddlewareWithOptions<object, object, IShieldContext>;
-  }
-
-  return middleware as IMiddlewareFunction<object, object, IShieldContext>;
-}
-
-/**
- *
- * @param type
- * @param rules
- * @param options
- *
- * Generates middleware from rule for a particular type.
- *
- */
-function applyRuleToType(type: GraphQLObjectType, rules: ShieldRule | IRuleFieldMap, options: IOptions): IMiddleware {
-  if (isRuleFunction(rules)) {
-    /* Apply defined rule function to every field */
-    const fieldMap = type.getFields();
-
-    const middleware = Object.keys(fieldMap).reduce((middleware, field) => {
-      return {
-        ...middleware,
-        [field]: generateFieldMiddlewareFromRule(rules, options),
-      };
-    }, {});
-
-    return middleware;
-  } else if (isRuleFieldMap(rules)) {
-    /* Apply rules assigned to each field to each field */
-    const fieldMap = type.getFields();
-
-    /* Extract default type wildcard if any and remove it for validation */
-    const defaultTypeRule = rules['*'];
-    const { '*': _, ...rulesWithoutWildcard } = rules;
-    /* Validation */
-
-    const fieldErrors = Object.keys(rulesWithoutWildcard)
-      .filter((type) => !Object.prototype.hasOwnProperty.call(fieldMap, type))
-      .map((field) => `${type.name}.${field}`)
-      .join(', ');
-
-    if (fieldErrors.length > 0) {
-      throw new ValidationError(
-        `It seems like you have applied rules to ${fieldErrors} fields but Shield cannot find them in your schema.`,
-      );
-    }
-
-    /* Generation */
-
-    const middleware = Object.keys(fieldMap).reduce(
-      (middleware, field) => ({
-        ...middleware,
-        [field]: generateFieldMiddlewareFromRule(withDefault(defaultTypeRule || options.fallbackRule)(rules[field]), options),
-      }),
-      {},
-    );
-
-    return middleware;
-  } else {
-    /* Apply fallbackRule to type with no defined rule */
-    const fieldMap = type.getFields();
-
-    const middleware = Object.keys(fieldMap).reduce(
-      (middleware, field) => ({
-        ...middleware,
-        [field]: generateFieldMiddlewareFromRule(options.fallbackRule, options),
-      }),
-      {},
-    );
-
-    return middleware;
-  }
+  };
 }
 
 /**
  *
  * @param schema
- * @param rule
- * @param options
+ * @param rules
  *
- * Applies the same rule over entire schema.
+ * Throws when the rule tree names types or fields the schema doesn't have.
  *
  */
-function applyRuleToSchema(schema: GraphQLSchema, rule: ShieldRule, options: IOptions): IMiddleware {
+function validateRuleTreeAgainstSchema(schema: GraphQLSchema, rules: IRules): void {
+  if (isRuleFunction(rules)) return;
+
   const typeMap = schema.getTypeMap();
 
-  const middleware = Object.keys(typeMap)
-    .filter((type) => !isIntrospectionType(typeMap[type]))
-    .reduce((middleware, typeName) => {
+  const typeErrors = Object.keys(rules)
+    .filter((type) => !Object.prototype.hasOwnProperty.call(typeMap, type))
+    .join(', ');
+
+  if (typeErrors.length > 0) {
+    throw new ValidationError(
+      `It seems like you have applied rules to ${typeErrors} types but Shield cannot find them in your schema.`,
+    );
+  }
+
+  const fieldErrors = Object.entries(rules)
+    .flatMap(([typeName, typeRules]) => {
       const type = typeMap[typeName];
+      if (!isObjectType(type) || isRuleFunction(typeRules)) return [];
 
-      if (isObjectType(type)) {
-        return {
-          ...middleware,
-          [typeName]: applyRuleToType(type, rule, options),
-        };
-      } else {
-        return middleware;
-      }
-    }, {});
+      const fieldMap = type.getFields();
+      return Object.keys(typeRules)
+        .filter((field) => field !== '*' && !Object.prototype.hasOwnProperty.call(fieldMap, field))
+        .map((field) => `${typeName}.${field}`);
+    })
+    .join(', ');
 
-  return middleware;
-}
-
-/**
- *
- * @param rules
- * @param wrapper
- *
- * Converts rule tree to middleware.
- *
- */
-function generateMiddlewareFromSchemaAndRuleTree(schema: GraphQLSchema, rules: IRules, options: IOptions): IMiddleware {
-  if (isRuleFunction(rules)) {
-    /* Applies rule to entire schema. */
-    return applyRuleToSchema(schema, rules, options);
-  } else {
-    /**
-     * Checks type map and field map and applies rules
-     * to particular fields.
-     */
-    const typeMap = schema.getTypeMap();
-
-    /* Validation */
-
-    const typeErrors = Object.keys(rules)
-      .filter((type) => !Object.prototype.hasOwnProperty.call(typeMap, type))
-      .join(', ');
-
-    if (typeErrors.length > 0) {
-      throw new ValidationError(
-        `It seems like you have applied rules to ${typeErrors} types but Shield cannot find them in your schema.`,
-      );
-    }
-
-    // Generation
-
-    const middleware = Object.keys(typeMap)
-      .filter((type) => !isIntrospectionType(typeMap[type]))
-      .reduce<IMiddleware>((middleware, typeName) => {
-        const type = typeMap[typeName];
-
-        if (isObjectType(type)) {
-          return {
-            ...middleware,
-            [typeName]: applyRuleToType(type, rules[typeName], options),
-          };
-        } else {
-          return middleware;
-        }
-      }, {});
-
-    return middleware;
+  if (fieldErrors.length > 0) {
+    throw new ValidationError(
+      `It seems like you have applied rules to ${fieldErrors} fields but Shield cannot find them in your schema.`,
+    );
   }
 }
 
 /**
  *
- * @param ruleTree
+ * @param rules
+ * @param typeName
+ * @param fieldName
  * @param options
  *
- * Generates middleware from given rules.
+ * Picks the most specific rule for a field: field rule, type wildcard, type rule, schema rule, then fallbackRule.
  *
  */
-export function generateMiddlewareGeneratorFromRuleTree<TSource = any, TContext = any, TArgs = any>(
-  ruleTree: IRules,
-  options: IOptions,
-): IMiddlewareGeneratorConstructor<TSource, TContext, TArgs> {
-  return (schema: GraphQLSchema) => generateMiddlewareFromSchemaAndRuleTree(schema, ruleTree, options);
+function findRuleForField(rules: IRules, typeName: string, fieldName: string, options: IOptions): ShieldRule {
+  if (isRuleFunction(rules)) return rules;
+
+  const typeRules = rules[typeName];
+  if (typeRules === undefined) return options.fallbackRule;
+  if (isRuleFunction(typeRules)) return typeRules;
+
+  return typeRules[fieldName] ?? typeRules['*'] ?? options.fallbackRule;
+}
+
+/**
+ *
+ * @param schema
+ * @param rules
+ * @param options
+ *
+ * Returns a copy of the schema where every object field resolver is guarded by its rule.
+ *
+ */
+export function applyRuleTreeToSchema(schema: GraphQLSchema, rules: IRules, options: IOptions): GraphQLSchema {
+  validateRuleTreeAgainstSchema(schema, rules);
+
+  return mapSchema(schema, {
+    [MapperKind.OBJECT_FIELD]: (field, fieldName, typeName) => ({
+      ...field,
+      resolve: wrapResolverWithRule(
+        field.resolve ?? defaultFieldResolver,
+        findRuleForField(rules, typeName, fieldName, options),
+        options,
+      ),
+    }),
+  });
 }

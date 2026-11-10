@@ -1,4 +1,3 @@
-import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { validateRuleTree } from '../src/validation.js';
 import { shield, rule, allow } from '../src/index.js';
@@ -28,7 +27,7 @@ describe('correctly helps developer', () => {
     });
 
     expect(() => {
-      applyMiddleware(schema, permissions);
+      permissions(schema);
     }).toThrow(`It seems like you have applied rules to Fail1, Fail2 types but Shield cannot find them in your schema.`);
   });
 
@@ -56,7 +55,7 @@ describe('correctly helps developer', () => {
     });
 
     expect(() => {
-      applyMiddleware(schema, permissions);
+      permissions(schema);
     }).toThrow('It seems like you have applied rules to Query.b, Query.c fields but Shield cannot find them in your schema.');
   });
 });

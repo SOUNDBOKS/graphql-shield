@@ -1,6 +1,5 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import fetch from 'node-fetch';
-import { applyMiddleware } from 'graphql-middleware';
 import { ApolloServer } from '@apollo/server';
 import { gql } from 'graphql-tag';
 import { startStandaloneServer } from '@apollo/server/standalone';
@@ -35,7 +34,7 @@ describe('integration tests', () => {
     });
 
     const server = new ApolloServer({
-      schema: applyMiddleware(makeExecutableSchema({ typeDefs, resolvers }), permissions),
+      schema: permissions(makeExecutableSchema({ typeDefs, resolvers })),
     });
 
     await startStandaloneServer(server, { listen: { port: 8008 } });

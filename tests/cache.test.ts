@@ -1,5 +1,4 @@
 import { graphql } from 'graphql';
-import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { shield, rule } from '../src/index.js';
 import type { IHashFunction } from '../src/types.js';
@@ -35,7 +34,7 @@ describe('caching:', () => {
       Test: rule({ cache: 'strict' })(allowMock),
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -95,7 +94,7 @@ describe('caching:', () => {
       Query: rule({ cache: 'strict' })(allowMock),
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -175,7 +174,7 @@ describe('caching:', () => {
       },
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     // Execution
     const query = `
@@ -244,7 +243,7 @@ describe('caching:', () => {
       Query: allow,
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -309,7 +308,7 @@ describe('caching:', () => {
       })(allowMock),
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -376,7 +375,7 @@ test('Customize hash function', async () => {
     },
   );
 
-  const schemaWithPermissions = applyMiddleware(schema, permissions);
+  const schemaWithPermissions = permissions(schema);
 
   /* Execution */
 
@@ -443,7 +442,7 @@ describe('legacy cache:', () => {
       Test: rule({ cache: true })(allowMock),
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -505,7 +504,7 @@ describe('legacy cache:', () => {
       Query: allow,
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     // Execution
     const query = `

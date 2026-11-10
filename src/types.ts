@@ -1,5 +1,4 @@
-import type { GraphQLResolveInfo } from 'graphql';
-import type { IMiddlewareGenerator } from 'graphql-middleware';
+import type { GraphQLResolveInfo, GraphQLSchema } from 'graphql';
 
 // Rule
 
@@ -9,18 +8,15 @@ export interface IRule {
   readonly name: string;
 
   equals(rule: IRule): boolean;
-  extractFragment(): IFragment | undefined;
   resolve(parent: object, args: object, ctx: IShieldContext, info: GraphQLResolveInfo, options: IOptions): Promise<IRuleResult>;
 }
 
 export interface IRuleOptions {
   cache: ICache;
-  fragment?: IFragment;
 }
 
 export interface ILogicRule {
   getRules(): ShieldRule[];
-  extractFragments(): IFragment[];
   evaluate(
     parent: object,
     args: object,
@@ -31,7 +27,6 @@ export interface ILogicRule {
   resolve(parent: object, args: object, ctx: IShieldContext, info: GraphQLResolveInfo, options: IOptions): Promise<IRuleResult>;
 }
 
-export type IFragment = string;
 export type ICache = 'strict' | 'contextual' | 'no_cache' | ICacheKeyFn;
 export type ICacheKeyFn = (parent: any, args: any, ctx: any, info: GraphQLResolveInfo) => string;
 export type IRuleResult = boolean | string | Error;
@@ -43,7 +38,6 @@ export type ICacheContructorOptions = ICache | boolean;
 
 export interface IRuleConstructorOptions {
   cache?: ICacheContructorOptions;
-  fragment?: IFragment;
 }
 
 // Rules Definition Tree
@@ -88,10 +82,8 @@ export interface IOptionsConstructor {
   hashFunction?: IHashFunction;
 }
 
-export declare function shield<TSource = any, TContext = any, TArgs = any>(
-  ruleTree: IRules,
-  options: IOptions,
-): IMiddlewareGenerator<TSource, TContext, TArgs>;
+/** Returns a copy of the schema with every object field guarded by its rule. */
+export type IShield = (schema: GraphQLSchema) => GraphQLSchema;
 
 export interface IShieldContext {
   _shield: {

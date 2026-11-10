@@ -16,10 +16,21 @@ GraphQL Shield helps you create a permission layer for your application. Using a
 
 ## Features
 
-- ✂️ **Flexible:** Based on [GraphQL Middleware](https://github.com/prismagraphql/graphql-middleware).
+- ✂️ **No middleware layer:** `shield(rules)(schema)` returns a copy of the schema with every field resolver guarded.
 - 🤝 **Compatible:** Works with all GraphQL Servers.
 - 🚀 **Smart:** Intelligent V8 Shield engine caches all your requests to prevent any unnecessary load.
 - 🎯 **Per-Type or Per-Field:** Write permissions for your schema, types or specific fields (check the example below).
+
+## Usage (2.x)
+
+```ts
+import { shield, allow, deny } from '@soundboks/graphql-shield';
+
+const permissions = shield({ Query: { '*': deny, health: allow } }, { fallbackError: 'Not Authorised!' });
+const schemaWithPermissions = permissions(schema);
+```
+
+2.0.0 dropped `graphql-middleware`: call the function `shield()` returns instead of `applyMiddleware(schema, permissions)`. Rule `fragment` options are gone with it.
 
 ## Documentation
 

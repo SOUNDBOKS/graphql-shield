@@ -4,7 +4,6 @@ import type {
   IRule,
   IRuleOptions,
   ICache,
-  IFragment,
   ICacheContructorOptions,
   IRuleConstructorOptions,
   ILogicRule,
@@ -13,14 +12,12 @@ import type {
   IOptions,
   IShieldContext,
 } from './types.js';
-import { isLogicRule } from './utils.js';
 import type { GraphQLResolveInfo } from 'graphql';
 
 export class Rule implements IRule {
   readonly name: string;
 
   private cache: ICache;
-  private fragment?: IFragment;
   private func: IRuleFunction;
 
   constructor(name: string, func: IRuleFunction, constructorOptions: IRuleConstructorOptions) {
@@ -29,7 +26,6 @@ export class Rule implements IRule {
     this.name = name;
     this.func = func;
     this.cache = options.cache;
-    this.fragment = options.fragment;
   }
 
   /**
@@ -85,15 +81,6 @@ export class Rule implements IRule {
 
   /**
    *
-   * Extracts fragment from the rule.
-   *
-   */
-  extractFragment(): IFragment | undefined {
-    return this.fragment;
-  }
-
-  /**
-   *
    * @param options
    *
    * Sets default values for options.
@@ -102,7 +89,6 @@ export class Rule implements IRule {
   private normalizeOptions(options: IRuleConstructorOptions): IRuleOptions {
     return {
       cache: options.cache !== undefined ? this.normalizeCacheOption(options.cache) : 'no_cache',
-      fragment: options.fragment !== undefined ? options.fragment : undefined,
     };
   }
 
@@ -206,7 +192,7 @@ export class InputRule<T> extends Rule {
         .then(() => true)
         .catch((err) => err);
 
-    super(name, validationFunction, { cache: 'strict', fragment: undefined });
+    super(name, validationFunction, { cache: 'strict' });
   }
 }
 
@@ -251,24 +237,6 @@ export class LogicRule implements ILogicRule {
    */
   getRules() {
     return this.rules;
-  }
-
-  /**
-   * Extracts fragments from the defined rules.
-   */
-  extractFragments(): IFragment[] {
-    const fragments = this.rules.reduce<IFragment[]>((fragments, rule) => {
-      if (isLogicRule(rule)) {
-        return fragments.concat(...rule.extractFragments());
-      }
-
-      const fragment = rule.extractFragment();
-      if (fragment) return fragments.concat(fragment);
-
-      return fragments;
-    }, []);
-
-    return fragments;
   }
 }
 

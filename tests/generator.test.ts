@@ -1,5 +1,4 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { applyMiddleware } from 'graphql-middleware';
 import { shield, rule } from '../src/index.js';
 import { graphql } from 'graphql';
 
@@ -34,7 +33,7 @@ describe('generates correct middleware', () => {
     const allowMock = vi.fn().mockResolvedValue(true);
     const permissions = shield(rule({ cache: 'no_cache' })(allowMock));
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
     const query = `
@@ -96,7 +95,7 @@ describe('generates correct middleware', () => {
       Query: rule({ cache: 'no_cache' })(allowMock),
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
     const query = `
@@ -158,7 +157,7 @@ describe('generates correct middleware', () => {
       Query: { a: rule({ cache: 'no_cache' })(allowMock) },
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
     const query = `
@@ -233,7 +232,7 @@ describe('generates correct middleware', () => {
       },
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
     const query = `
@@ -315,10 +314,10 @@ describe('generates correct middleware', () => {
     });
 
     /* First usage */
-    applyMiddleware(schema, permissions);
+    permissions(schema);
 
     /* Second usage */
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
     const query = `
@@ -352,5 +351,58 @@ describe('generates correct middleware', () => {
     expect(allowMock).toHaveBeenCalledTimes(1);
     expect(defaultQueryMock).toHaveBeenCalledTimes(1);
     expect(defaultTypeMock).toHaveBeenCalledTimes(2);
+  });
+
+  test('guards fields without a resolver and leaves the original schema untouched', async () => {
+    /* Schema */
+
+    const typeDefs = `
+      type Query {
+        user: User
+      }
+      type User {
+        name: String
+        secret: String
+      }
+    `;
+
+    const resolvers = {
+      Query: {
+        user: () => ({ name: 'name', secret: 'secret' }),
+      },
+    };
+
+    const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+    /* Permissions */
+
+    const denyMock = vi.fn().mockResolvedValue(false);
+    const permissions = shield(
+      { User: { secret: rule({ cache: 'no_cache' })(denyMock) } },
+      { fallbackError: new Error('denied') },
+    );
+
+    const schemaWithPermissions = permissions(schema);
+
+    /* Execution */
+
+    const source = `
+      query {
+        user {
+          name
+          secret
+        }
+      }
+    `;
+
+    const guarded = await graphql({ schema: schemaWithPermissions, source });
+    const original = await graphql({ schema, source });
+
+    /* Tests */
+
+    expect(guarded.data).toEqual({ user: { name: 'name', secret: null } });
+    expect(guarded.errors?.map((error) => error.message)).toEqual(['denied']);
+    expect(original).toEqual({ data: { user: { name: 'name', secret: 'secret' } } });
+    expect(denyMock).toHaveBeenCalledTimes(1);
   });
 });

@@ -23,7 +23,6 @@ import { Rule, RuleAnd, RuleOr, RuleNot, RuleTrue, RuleFalse, InputRule, RuleCha
  * 3.
  * const auth = rule({
  *  name: 'name',
- *  fragment: 'string',
  *  cache: 'cache',
  * })(async (parent, args, ctx, info) => {
  *  return true
@@ -44,7 +43,6 @@ export const rule =
     }
 
     return new Rule(name, func, {
-      fragment: options.fragment,
       cache: options.cache,
     });
   };

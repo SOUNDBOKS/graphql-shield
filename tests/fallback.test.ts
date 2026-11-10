@@ -1,5 +1,4 @@
 import { graphql } from 'graphql';
-import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { shield, rule, allow } from '../src/index.js';
 
@@ -38,7 +37,7 @@ describe('fallbackError correctly handles errors', () => {
       },
     );
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -86,7 +85,7 @@ describe('fallbackError correctly handles errors', () => {
       },
     );
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -137,7 +136,7 @@ describe('fallbackError correctly handles errors', () => {
       },
     );
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
     const query = `
@@ -184,7 +183,7 @@ describe('fallbackError correctly handles errors', () => {
       },
     );
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -238,7 +237,7 @@ describe('fallbackError correctly handles errors', () => {
       },
     );
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -290,7 +289,7 @@ describe('external errors can be controled correctly', () => {
       },
     );
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -335,7 +334,7 @@ describe('external errors can be controled correctly', () => {
       },
     );
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -382,7 +381,7 @@ describe('debug mode works as expected', () => {
       },
     );
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -432,7 +431,7 @@ describe('debug mode works as expected', () => {
       },
     );
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 
@@ -474,7 +473,7 @@ describe('custom errors work as expected', () => {
       }),
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
     const query = `
@@ -514,7 +513,7 @@ describe('custom errors work as expected', () => {
       }),
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
     const query = `
@@ -582,7 +581,7 @@ describe('fallbackRule correctly applies fallback rule', () => {
       },
     );
 
-    const schemaWithPermissions = applyMiddleware(schema, permissions);
+    const schemaWithPermissions = permissions(schema);
 
     /* Execution */
 

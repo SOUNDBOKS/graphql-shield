@@ -1,8 +1,8 @@
 import hash from 'object-hash';
-import { middleware, type IMiddlewareGenerator } from 'graphql-middleware';
+import type { GraphQLSchema } from 'graphql';
 import { ValidationError, validateRuleTree } from './validation.js';
-import type { IRules, IOptions, IOptionsConstructor, ShieldRule, IHashFunction, IFallbackErrorType } from './types.js';
-import { generateMiddlewareGeneratorFromRuleTree } from './generator.js';
+import type { IRules, IOptions, IOptionsConstructor, IShield, ShieldRule, IHashFunction, IFallbackErrorType } from './types.js';
+import { applyRuleTreeToSchema } from './generator.js';
 import { allow } from './constructors.js';
 import { withDefault } from './utils.js';
 
@@ -36,17 +36,12 @@ function normalizeOptions(options: IOptionsConstructor): IOptions {
  * Validates rules and generates middleware from defined rule tree.
  *
  */
-export function shield<TSource = any, TContext = any, TArgs = any>(
-  ruleTree: IRules,
-  options: IOptionsConstructor = {},
-): IMiddlewareGenerator<TSource, TContext, TArgs> {
+export function shield(ruleTree: IRules, options: IOptionsConstructor = {}): IShield {
   const normalizedOptions = normalizeOptions(options);
   const ruleTreeValidity = validateRuleTree(ruleTree);
 
   if (ruleTreeValidity.status === 'ok') {
-    const generatorFunction = generateMiddlewareGeneratorFromRuleTree<TSource, TContext, TArgs>(ruleTree, normalizedOptions);
-
-    return middleware(generatorFunction);
+    return (schema: GraphQLSchema) => applyRuleTreeToSchema(schema, ruleTree, normalizedOptions);
   } else {
     throw new ValidationError(ruleTreeValidity.message);
   }

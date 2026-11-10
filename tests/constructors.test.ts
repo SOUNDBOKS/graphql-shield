@@ -26,9 +26,8 @@ describe('rule constructor', () => {
     expect(
       rule('name', {
         cache: 'contextual',
-        fragment: 'fragment',
       })(func),
-    ).toEqual(new Rule('name', func, { cache: 'contextual', fragment: 'fragment' }));
+    ).toEqual(new Rule('name', func, { cache: 'contextual' }));
   });
 
   test('correctly constructs with name but no options', async () => {
@@ -49,12 +48,10 @@ describe('rule constructor', () => {
     expect(
       rule({
         cache: 'contextual',
-        fragment: 'fragment',
       })(func),
     ).toEqual(
       new Rule(n.toString(), func, {
         cache: 'contextual',
-        fragment: 'fragment',
       }),
     );
   });
