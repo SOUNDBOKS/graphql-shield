@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> This repository is archived. `@soundboks/graphql-shield` 2.0.1 and later are released from [`sb-backend-monorepo/packages/graphql-shield`](https://github.com/SOUNDBOKS/sb-backend-monorepo/tree/main/packages/graphql-shield). Version 2 runs without `graphql-middleware`. `shield(rules)` returns a function that takes a schema and returns the guarded schema.
+
 <p align="center"><img src="media/shield.jpg" width="300"/></p>
 
 # graphql-shield
